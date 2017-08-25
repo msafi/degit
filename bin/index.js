@@ -31,7 +31,7 @@ if (args.help || !src) {
 
 const supported = new Set(['github', 'gitlab', 'bitbucket']);
 
-degit(src, dest);
+//degit(src, dest);
 
 async function degit(src, dest) {
 	if (args.verbose) log(`cloning ${src} to ${dest}`);
