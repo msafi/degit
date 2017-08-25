@@ -73,7 +73,7 @@ async function degit(src, dest) {
 	log(`cloned ${chalk.bold(`${repo.user}/${repo.name}#${repo.ref}`)}${dest !== '.' ? ` to ${chalk.bold(dest)}` : ''}`);
 }
 
-function parse(src) {
+export function parse(src) {
 	const match = /^(?:https:\/\/([^/]+)\/|git@([^/]+):|([^/]+):)?([^/\s]+)\/([^/\s#]+)(?:#(.+))?/.exec(src);
 	if (!match) error(`could not parse ${src}`);
 
@@ -89,7 +89,7 @@ function parse(src) {
 	return { site, user, name, ref, url };
 }
 
-async function getHash(repo, cached) {
+export async function getHash(repo, cached) {
 	try {
 		const refs = await fetchRefs(repo);
 		if (args.verbose) log(`fetched ${refs.length} ${refs.length === 1 ? 'ref' : 'refs'}`);
@@ -99,7 +99,7 @@ async function getHash(repo, cached) {
 	}
 }
 
-function getHashFromCache(repo, cached) {
+export function getHashFromCache(repo, cached) {
 	if (repo.ref in cached) {
 		const hash = cached[repo.ref];
 		log(`using cached commit hash ${hash}`);
@@ -107,7 +107,7 @@ function getHashFromCache(repo, cached) {
 	}
 }
 
-async function fetchRefs(repo) {
+export async function fetchRefs(repo) {
 	const { stdout } = await exec(`git ls-remote ${repo.url}`);
 
 	return stdout.split('\n').filter(Boolean).map(row => {
@@ -134,7 +134,7 @@ async function fetchRefs(repo) {
 	});
 }
 
-function updateCache(dir, repo, hash, cached) {
+export function updateCache(dir, repo, hash, cached) {
 	if (cached[repo.ref] === hash) return;
 
 	const oldHash = cached[repo.ref];
@@ -161,7 +161,7 @@ function updateCache(dir, repo, hash, cached) {
 	fs.writeFileSync(path.join(dir, 'map.json'), JSON.stringify(cached, null, '  '));
 }
 
-function selectRef(refs, selector) {
+export function selectRef(refs, selector) {
 	for (const ref of refs) {
 		if (ref.name === selector) {
 			if (args.verbose) log(`found matching commit hash: ${ref.hash}`);
@@ -176,7 +176,7 @@ function selectRef(refs, selector) {
 	}
 }
 
-async function downloadIfNotExists(url, file) {
+export async function downloadIfNotExists(url, file) {
 	try {
 		fs.statSync(file);
 		if (args.verbose) log(`${file} already exists locally`);
@@ -187,7 +187,7 @@ async function downloadIfNotExists(url, file) {
 	}
 }
 
-async function untar(file, dest) {
+export async function untar(file, dest) {
 	if (args.verbose) log(`extracting ${file} to ${dest}`);
 	return tar.extract({
 		file,
